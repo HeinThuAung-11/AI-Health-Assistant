@@ -1,3 +1,4 @@
+# ========== Frontend ==========
 # Dependencies
 node_modules/
 npm-debug.log*
@@ -16,7 +17,7 @@ dist/
 .vercel
 .turbo
 
-# Python
+# ========== Python/Backend ==========
 __pycache__/
 *.py[cod]
 *$py.class
@@ -37,14 +38,37 @@ htmlcov/
 .tox/
 .hypothesis/
 
-# Environment variables
+# Backend virtual environment
+backend/health-navigator/
+
+# Backend sensitive data folders
+backend/uploads/*
+backend/temp/*
+backend/vector_stores/*
+!backend/uploads/.gitkeep
+!backend/temp/.gitkeep
+!backend/vector_stores/.gitkeep
+
+# Backend environment variables
 .env
 .env*.local
 .env.development.local
 .env.test.local
 .env.production.local
+backend/.env
+backend/.env.local
 
-# IDEs and Editors
+# Backend test outputs
+backend/tests/*.json
+backend/tests/analysis_result.json
+!backend/tests/sample_health_report.pdf
+
+# Backend database
+backend/*.db
+backend/*.sqlite3
+backend/*.pkl
+
+# ========== IDEs and Editors ==========
 .vscode/
 .idea/
 *.swp
@@ -54,28 +78,23 @@ htmlcov/
 *.sublime-project
 *.sublime-workspace
 
-# Testing
+# ========== Testing ==========
 coverage/
 .nyc_output
 
-# Logs
+# ========== Logs ==========
 logs/
 *.log
 
-# OS
+# ========== OS ==========
 Thumbs.db
-.DS_Store
 
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Misc
+# ========== Misc ==========
 .cache/
 .parcel-cache/
-.next/
 .nuxt/
 *.bak
 *.tmp
 *.temp
+check_before_push.sh
+backend/check_secrets.sh

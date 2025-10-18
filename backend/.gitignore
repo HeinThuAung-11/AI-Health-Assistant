@@ -1,0 +1,63 @@
+
+# Environment variables (MOST IMPORTANT!)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+health-navigator/
+.venv
+
+# Uploaded files and temporary data
+uploads/*
+temp/*
+vector_stores/*
+!uploads/.gitkeep
+!temp/.gitkeep
+!vector_stores/.gitkeep
+
+# Test output
+tests/*.json
+tests/*.pdf
+!tests/sample_health_report.pdf
+
+# Database files
+*.db
+*.sqlite3
+*.pkl
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# API keys and secrets
+*secret*
+*token*
+*key*.txt
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
