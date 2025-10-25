@@ -428,6 +428,15 @@ async def list_reports():
 
     return {"total": len(reports), "reports": reports}
 
+# Render health check
+@app.get("/api/health")
+async def render_health():
+    """Health check for Render"""
+    return {
+        "status": "healthy",
+        "service": "health-navigator-api",
+        "timestamp": datetime.utcnow().isoformat()
+    }
 
 # Error handlers
 @app.exception_handler(Exception)

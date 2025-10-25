@@ -4,29 +4,22 @@ fastapi==0.104.1
 uvicorn[standard]==0.24.0
 python-multipart==0.0.6
 python-dotenv==1.0.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
 
-# PDF Processing
-unstructured[pdf]==0.11.0
-pdf2image==1.16.3
-pytesseract==0.3.10
-pillow==10.1.0
+# PDF Processing (Render-optimized)
 pdfplumber==0.10.3
+pillow==10.1.0
 
-# AI & LangChain
-langchain==0.1.0
-langchain-openai==0.0.2
-openai==1.6.1
-tiktoken==0.5.2
+# AI
+groq==0.4.1
 
-# Vector Databases
-pinecone-client==3.0.0
+# Vector Store
 faiss-cpu==1.7.4
-chromadb==0.4.22
+numpy==1.26.2
 
 # Data Processing
 pandas==2.1.4
-numpy==1.26.2
 
-# Security
-passlib==1.7.4
-python-jose[cryptography]==3.3.0
+# Supabase
+supabase==2.3.0
