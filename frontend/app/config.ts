@@ -3,16 +3,26 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost
 
 export const API_ENDPOINTS = {
   upload: "/api/upload",
-  analyze: (reportId) => `/api/analyze/${reportId}`,
+  analyze: (reportId: string): string => `/api/analyze/${reportId}`,
   ask: "/api/ask",
-  getReport: (reportId) => `/api/report/${reportId}`,
-  deleteReport: (reportId) => `/api/report/${reportId}`,
+  getReport: (reportId: string): string => `/api/report/${reportId}`,
+  deleteReport: (reportId: string): string => `/api/report/${reportId}`,
   listReports: "/api/reports",
   health: "/health",
-};
+} as const;
+
+// Types
+interface ApiCallOptions extends RequestInit {
+  headers?: Record<string, string>;
+}
+
+interface ApiErrorResponse {
+  detail?: string;
+  message?: string;
+}
 
 // Helper function for API calls
-export const apiCall = async (endpoint, options = {}) => {
+export const apiCall = async <T = any>(endpoint: string, options: ApiCallOptions = {}): Promise<T> => {
   const url = `${API_BASE_URL}${endpoint}`;
 
   console.log(`🔗 API Call: ${url}`);
@@ -27,7 +37,7 @@ export const apiCall = async (endpoint, options = {}) => {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({
+      const error: ApiErrorResponse = await response.json().catch(() => ({
         detail: `HTTP ${response.status}`,
       }));
       throw new Error(error.detail || error.message || "Request failed");
@@ -41,7 +51,7 @@ export const apiCall = async (endpoint, options = {}) => {
 };
 
 // Check if backend is awake (for cold starts)
-export const checkBackendHealth = async () => {
+export const checkBackendHealth = async (): Promise<boolean> => {
   try {
     const response = await fetch(`${API_BASE_URL}/health`, {
       signal: AbortSignal.timeout(60000), // 60 second timeout for cold start
