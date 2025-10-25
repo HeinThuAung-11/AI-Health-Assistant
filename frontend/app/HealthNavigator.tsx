@@ -1,7 +1,5 @@
 "use client";
 // import { MockReport } from "@/utli-types";
-import { analyzeReportAPI, askQuestionAPI, uploadReport } from "./api/api";
-
 import {
   AlertCircle,
   Calendar,
@@ -14,6 +12,8 @@ import {
   Upload,
 } from "lucide-react";
 import { useState } from "react";
+import { analyzeReportAPI, askQuestionAPI, uploadReport } from "./api/api";
+import BackendStatusChecker from "./components/BackendStatus";
 
 const HealthNavigator = () => {
   const [activeTab, setActiveTab] = useState("upload");
@@ -121,6 +121,7 @@ const HealthNavigator = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+      <BackendStatusChecker />
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-4">

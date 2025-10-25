@@ -1,11 +1,11 @@
-const API_BASE = "http://0.0.0.0:8000";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 // Upload PDF file
 export const uploadReport = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
   console.log("Uploading file:", file.name);
-  const res = await fetch(`${API_BASE}/api/upload`, {
+  const res = await fetch(`${API_BASE_URL}/api/upload`, {
     method: "POST",
     body: formData,
   });
@@ -16,7 +16,7 @@ export const uploadReport = async (file) => {
 // Analyze uploaded report
 export const analyzeReportAPI = async (reportId) => {
   console.log("Analyzing report with ID:", reportId);
-  const res = await fetch(`${API_BASE}/api/analyze/${reportId}`, {
+  const res = await fetch(`${API_BASE_URL}/api/analyze/${reportId}`, {
     method: "POST",
   });
   if (!res.ok) throw new Error("Analysis failed");
@@ -25,7 +25,7 @@ export const analyzeReportAPI = async (reportId) => {
 
 // Ask a question
 export const askQuestionAPI = async (reportId, question) => {
-  const res = await fetch(`${API_BASE}/api/ask`, {
+  const res = await fetch(`${API_BASE_URL}/api/ask`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
