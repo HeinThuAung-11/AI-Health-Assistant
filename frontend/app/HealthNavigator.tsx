@@ -1,5 +1,7 @@
 "use client";
-import { MockReport } from "@/utli-types";
+// import { MockReport } from "@/utli-types";
+import { analyzeReportAPI, askQuestionAPI, uploadReport } from "./api/api";
+
 import {
   AlertCircle,
   Calendar,
@@ -22,40 +24,74 @@ const HealthNavigator = () => {
   const [userQuestion, setUserQuestion] = useState("");
 
   // Simulated report analysis (you'll replace this with actual API calls)
+  // const analyzeReport = async () => {
+  //   setAnalyzing(true);
+
+  //   // Simulate API call delay
+  //   await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  //   // Mock analyzed report data
+  //   const mockReport: MockReport = {
+  //     patientName: "John Doe",
+  //     reportType: "Complete Blood Count (CBC)",
+  //     date: "2025-10-10",
+  //     keyFindings: [
+  //       { metric: "Hemoglobin", value: "13.2 g/dL", status: "normal", range: "13.5-17.5 g/dL" },
+  //       { metric: "White Blood Cells", value: "11.5 x10³/μL", status: "elevated", range: "4.5-11.0 x10³/μL" },
+  //       { metric: "Platelets", value: "250 x10³/μL", status: "normal", range: "150-400 x10³/μL" },
+  //       { metric: "Red Blood Cells", value: "4.8 M/μL", status: "normal", range: "4.5-5.5 M/μL" },
+  //     ],
+  //     summary:
+  //       "Your blood count shows mostly normal values. Your white blood cell count is slightly elevated, which could indicate a mild infection or inflammation. This is usually not serious but should be monitored.",
+  //     nextSteps: [
+  //       "Follow up with your primary care physician in 2 weeks",
+  //       "Monitor for symptoms like fever or persistent fatigue",
+  //       "Stay hydrated and get adequate rest",
+  //     ],
+  //     urgency: "routine",
+  //   };
+
+  //   setReport(mockReport);
+  //   setAnalyzing(false);
+  //   setActiveTab("results");
+  // };
   const analyzeReport = async () => {
-    setAnalyzing(true);
+    if (!file) return alert("Please upload a file first.");
+    try {
+      setAnalyzing(true);
+      setReport(null);
+      console.log("Starting analysis for file:", file.name);
+      // Step 1: Upload PDF
+      const uploadRes = await uploadReport(file);
+      const reportId = uploadRes.report_id;
+      console.log("Uploaded Report ID:", reportId);
+      // Step 2: Analyze uploaded report
+      const analysisRes = await analyzeReportAPI(reportId);
+      console.log("Analysis Result:", analysisRes);
+      // Step 3: Set result to display
+      setReport({
+        patientName: analysisRes.patient_name || "Unknown",
+        reportType: analysisRes.report_type || "Unknown Report",
+        date: new Date().toISOString().split("T")[0],
+        keyFindings: analysisRes.key_findings || [],
+        summary: analysisRes.summary || "No summary available.",
+        nextSteps: analysisRes.next_steps || [],
+        urgency: analysisRes.urgency || "routine",
+        reportId,
+      });
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Mock analyzed report data
-    const mockReport: MockReport = {
-      patientName: "John Doe",
-      reportType: "Complete Blood Count (CBC)",
-      date: "2025-10-10",
-      keyFindings: [
-        { metric: "Hemoglobin", value: "13.2 g/dL", status: "normal", range: "13.5-17.5 g/dL" },
-        { metric: "White Blood Cells", value: "11.5 x10³/μL", status: "elevated", range: "4.5-11.0 x10³/μL" },
-        { metric: "Platelets", value: "250 x10³/μL", status: "normal", range: "150-400 x10³/μL" },
-        { metric: "Red Blood Cells", value: "4.8 M/μL", status: "normal", range: "4.5-5.5 M/μL" },
-      ],
-      summary:
-        "Your blood count shows mostly normal values. Your white blood cell count is slightly elevated, which could indicate a mild infection or inflammation. This is usually not serious but should be monitored.",
-      nextSteps: [
-        "Follow up with your primary care physician in 2 weeks",
-        "Monitor for symptoms like fever or persistent fatigue",
-        "Stay hydrated and get adequate rest",
-      ],
-      urgency: "routine",
-    };
-
-    setReport(mockReport);
-    setAnalyzing(false);
-    setActiveTab("results");
+      setActiveTab("results");
+    } catch (err) {
+      console.error(err);
+      alert("Error analyzing report: " + err.message);
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const handleFileUpload = (e) => {
     const uploadedFile = e.target.files[0];
+    console.log("Selected file:", uploadedFile);
     if (uploadedFile && uploadedFile.type === "application/pdf") {
       setFile(uploadedFile);
     } else {
@@ -63,22 +99,24 @@ const HealthNavigator = () => {
     }
   };
 
-  const handleAskQuestion = () => {
+  const handleAskQuestion = async () => {
     if (!userQuestion.trim()) return;
+    if (!report?.reportId) return alert("No analyzed report found.");
 
-    // Add user message
+    // Add user question to chat
     const newMessages = [...chatMessages, { type: "user", text: userQuestion }];
-
-    // Simulate AI response
-    const mockResponse =
-      "Based on your report, an elevated white blood cell count can be caused by infections, inflammation, or stress. In your case, it's only slightly elevated, which is often temporary. I recommend monitoring your symptoms and following up with your doctor as planned.";
-
-    setTimeout(() => {
-      setChatMessages([...newMessages, { type: "ai", text: mockResponse }]);
-    }, 1000);
-
     setChatMessages(newMessages);
     setUserQuestion("");
+
+    try {
+      const response = await askQuestionAPI(report.reportId, userQuestion);
+      const aiResponse = response.answer || "No answer available.";
+
+      setChatMessages([...newMessages, { type: "ai", text: aiResponse }]);
+    } catch (err) {
+      console.error(err);
+      setChatMessages([...newMessages, { type: "ai", text: "Sorry, something went wrong." }]);
+    }
   };
 
   return (
@@ -289,7 +327,7 @@ const HealthNavigator = () => {
                   <p className="text-sm mt-2">I'll explain it in simple terms</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 text-black">
                   {chatMessages.map((msg, idx) => (
                     <div key={idx} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
                       <div
@@ -311,7 +349,7 @@ const HealthNavigator = () => {
                 onChange={(e) => setUserQuestion(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleAskQuestion()}
                 placeholder="Type your question..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
               />
               <button
                 onClick={handleAskQuestion}
