@@ -93,28 +93,6 @@ async def lifespan(app: FastAPI):
     logger.info("🛑 Shutting down...")
 
 
-# Initialize FastAPI app
-app = FastAPI(
-    title="Health Navigator API",
-    description="AI-powered health report analysis and Q&A system",
-    version="1.0.0",
-    lifespan=lifespan,
-)
-
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        settings.frontend_url,
-        "http://localhost:3000",
-        "http://localhost:3001",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
 # ==================== ROUTES ====================
 
 
