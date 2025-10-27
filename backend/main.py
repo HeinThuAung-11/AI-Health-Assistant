@@ -40,22 +40,20 @@ vector_manager: VectorStoreManager = None
 # In-memory storage (replace with database in production)
 report_storage: Dict[str, Dict] = {}
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  # or ["http://localhost:3000"]
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
 # Initialize FastAPI app
 app = FastAPI(
     title="Health Navigator API",
     description="AI-powered health report analysis and Q&A system",
     version="1.0.0",
 )
+origins = [
+    "https://ai-health-assistant-frontend-gamma.vercel.app/",  # your deployed frontend
+    "http://localhost:3000",  # for local development
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # or ["http://localhost:3000"]
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -428,6 +426,7 @@ async def list_reports():
 
     return {"total": len(reports), "reports": reports}
 
+
 # Render health check
 @app.get("/api/health")
 async def render_health():
@@ -435,8 +434,9 @@ async def render_health():
     return {
         "status": "healthy",
         "service": "health-navigator-api",
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.utcnow().isoformat(),
     }
+
 
 # Error handlers
 @app.exception_handler(Exception)
