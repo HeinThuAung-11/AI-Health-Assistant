@@ -25,6 +25,40 @@ from services.ai_analyzer import HealthReportAnalyzer
 from services.pdf_processor import PDFProcessor
 from services.vector_store import VectorStoreManager
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):  
+    """Initialize services on startup, cleanup on shutdown"""
+    global pdf_processor, ai_analyzer, vector_manager
+
+    logger.info("🚀 Starting Health Navigator API...")
+
+    # Startup: Initialize services
+    pdf_processor = PDFProcessor(
+        temp_dir=settings.temp_dir, 
+        upload_dir=settings.upload_dir
+    )
+
+    ai_config = get_ai_config()
+    ai_analyzer = HealthReportAnalyzer(
+        api_key=ai_config["api_key"],
+        model=ai_config["model"],
+        temperature=ai_config["temperature"],
+        max_tokens=ai_config["max_tokens"],
+        use_groq=(ai_config["provider"] == "groq"),
+    )
+
+    vector_manager = VectorStoreManager(
+        api_key=ai_config["api_key"], 
+        use_groq=(ai_config["provider"] == "groq")
+    )
+
+    logger.info("✅ All services initialized")
+
+    yield  # ← App runs while this is paused
+
+    # Shutdown: Cleanup
+    logger.info("🛑 Shutting down...")
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -45,9 +79,10 @@ app = FastAPI(
     title="Health Navigator API",
     description="AI-powered health report analysis and Q&A system",
     version="1.0.0",
+    lifespan=lifespan  
 )
 origins = [
-    "https://ai-health-assistant-frontend-gamma.vercel.app/",  # your deployed frontend
+    "https://ai-health-assistant-frontend-gamma.vercel.app",  # your deployed frontend
     "http://localhost:3000",  # for local development
 ]
 
@@ -58,40 +93,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Initialize services on startup, cleanup on shutdown"""
-    global pdf_processor, ai_analyzer, vector_manager
-
-    logger.info("🚀 Starting Health Navigator API...")
-
-    # Initialize services
-    pdf_processor = PDFProcessor(
-        temp_dir=settings.temp_dir, upload_dir=settings.upload_dir
-    )
-
-    ai_config = get_ai_config()
-    ai_analyzer = HealthReportAnalyzer(
-        api_key=ai_config["api_key"],
-        model=ai_config["model"],
-        temperature=ai_config["temperature"],
-        max_tokens=ai_config["max_tokens"],
-        use_groq=(ai_config["provider"] == "groq"),
-    )
-
-    vector_manager = VectorStoreManager(
-        api_key=ai_config["api_key"], use_groq=(ai_config["provider"] == "groq")
-    )
-
-    logger.info("✅ All services initialized")
-
-    yield
-
-    # Cleanup
-    logger.info("🛑 Shutting down...")
-
 
 # ==================== ROUTES ====================
 
