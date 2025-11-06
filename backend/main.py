@@ -82,7 +82,7 @@ app = FastAPI(
     lifespan=lifespan  
 )
 origins = [
-    "https://ai-health-assistant-frontend-gamma.vercel.app",  # your deployed frontend
+    "https://ai-health-assistant-frontend-gamma.vercel.app",  # deployed frontend
     "http://localhost:3000",  # for local development
 ]
 

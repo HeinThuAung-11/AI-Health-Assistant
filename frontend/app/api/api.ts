@@ -1,24 +1,20 @@
 export const API_BASE_URL = "https://ai-health-navigator-api.onrender.com";
 // Types
 interface UploadResponse {
-  // Add the actual response structure from your API
   reportId: string;
   [key: string]: any;
 }
 
 interface AnalysisResponse {
-  // Add the actual response structure from your API
   [key: string]: any;
 }
 
 interface QuestionResponse {
-  // Add the actual response structure from your API
   answer: string;
   [key: string]: any;
 }
 
 interface ReportResponse {
-  // Add the actual response structure from your API
   [key: string]: any;
 }
 
