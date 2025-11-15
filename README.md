@@ -7,7 +7,7 @@
 **AI Health Navigator** is an intelligent web application that helps patients understand their medical lab reports by translating complex medical terminology into simple, easy-to-understand language using artificial intelligence.
 
 ---
-## 🧠 **Authorship Notice:**  
+### 🧠 **Authorship Notice:**  
 - This project, *AI Health Assistant*, is a collaborative work jointly developed and co-owned by **Su Phyu Sin Htet** and **Hein Thu Aung**.  
 - The GitHub repository is hosted under HeinThuAung-11 for version control purposes, but all intellectual property, code, and assets are equally shared between both authors.
 ---
