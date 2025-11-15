@@ -337,3 +337,17 @@ Medical reports are often confusing and anxiety-inducing for patients. This tool
 ---
 
 **This project demonstrates proficiency in modern full-stack development, AI/ML integration, cloud deployment, and solving real-world healthcare challenges with technology.** 🏆
+---
+
+### 📜 License & Usage
+© 2025 Su Phyu Sin Htet and Hein Thu Aung. All Rights Reserved.  
+
+This AI Health Assistant project was collaboratively developed by Su Phyu Sin Htet and Hein Thu Aung.  
+It is protected as original intellectual property.  
+
+You may view, read, and cite this repository for educational or research purposes only.  
+Any reproduction, redistribution, modification, or commercial use of this project, its source code, 
+trained models, or design assets without prior written consent from both authors is strictly prohibited.
+
+For collaboration or licensing discussions, please contact the authors directly.
+
